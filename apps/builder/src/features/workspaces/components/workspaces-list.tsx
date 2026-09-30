@@ -1,4 +1,7 @@
-import { isWorkspaceScheduledForDeletion } from "@chatbotx.io/business"
+import {
+  communityMaxWorkspaces,
+  isWorkspaceScheduledForDeletion,
+} from "@chatbotx.io/business"
 import {
   Avatar,
   AvatarFallback,
@@ -201,7 +204,13 @@ const WorkspacesList = async ({
   // are meant to stay single-workspace), but a user with ZERO workspaces has
   // no other path to `/channels/create` anywhere on this page — hiding it
   // here leaves them stuck on a static "no workspaces" message forever.
-  const showCreateCard = !isCommunity() || workspaces.length === 0
+  // COMMUNITY_MAX_WORKSPACES > 1 lets an owner keep creating up to that limit
+  // (enforced server-side in workspaceService.create).
+  const maxOwned = communityMaxWorkspaces()
+  const showCreateCard =
+    !isCommunity() ||
+    workspaces.length === 0 ||
+    (maxOwned > 1 && ownerWorkspaceIds.length < maxOwned)
   const ownerIds = new Set(ownerWorkspaceIds)
   const superAdminIds = new Set(superAdminWorkspaceIds)
   const ownerLabel = t("home.owner")
