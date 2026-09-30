@@ -10,6 +10,8 @@ export const keys = () =>
       NEXT_PUBLIC_BUILDER_URL: z.url().default("http://localhost:3123"),
       PLATFORM_ADMIN_EMAIL: z.email().optional(),
       LICENSE_KEY: z.string().optional(),
+      // Community edition: how many workspaces a single owner may create.
+      COMMUNITY_MAX_WORKSPACES: z.coerce.number().int().min(1).default(1),
     },
     runtimeEnv: process.env,
   })
@@ -19,3 +21,4 @@ export const env = keys()
 export const isCommunity = () => keys().NEXT_PUBLIC_EDITION === "community"
 export const isEnterprise = () => keys().NEXT_PUBLIC_EDITION === "enterprise"
 export const isCloud = () => keys().NEXT_PUBLIC_EDITION === "cloud"
+export const communityMaxWorkspaces = () => keys().COMMUNITY_MAX_WORKSPACES
