@@ -13,6 +13,9 @@ export const integrationContextEnv = () =>
       REALTIME_BROADCAST_SECRET: z.string().min(32),
       REALTIME_INTERNAL_URL: z.url().optional(),
       REALTIME_DELIVERY_GATE: z.stringbool().optional().default(true),
+      // Default platform/brand name (browser tab title, emails) when no tenant
+      // branding overrides it.
+      PLATFORM_NAME: z.string().min(1).optional(),
     },
     runtimeEnv: process.env,
     skipValidation: process.env.SKIP_ENV_CHECK === "true",

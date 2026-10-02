@@ -11,6 +11,7 @@ const mocks = vi.hoisted(() => ({
     NEXT_PUBLIC_STORAGE_URL: undefined as string | undefined,
     FORCE_PUBLIC_HTTPS: false,
     REALTIME_BROADCAST_SECRET: "secret",
+    PLATFORM_NAME: undefined as string | undefined,
   },
   findActiveByDomain: vi.fn(),
   findByTenantId: vi.fn(),
@@ -56,6 +57,7 @@ beforeEach(() => {
   mocks.env.NEXT_PUBLIC_BUILDER_URL = BUILDER_URL
   mocks.env.NEXT_PUBLIC_STORAGE_URL = undefined
   mocks.env.FORCE_PUBLIC_HTTPS = false
+  mocks.env.PLATFORM_NAME = undefined
   mocks.listByTenant.mockResolvedValue([])
 })
 
@@ -180,6 +182,23 @@ describe("resolveTenantSettingsByDomain", () => {
     expect(settings.publicRealtimeUrl).toBe(`${BUILDER_URL}/ws/`)
     expect(settings.storageUrl).toBe("https://files.chatbotx.io/assets/")
     expect(settings.logoDarkUrl).toBe(`${BUILDER_URL}/brand/logo_black.svg`)
+  })
+
+  test("defaults the platform name to ChatbotX", async () => {
+    mocks.hasEnterpriseFeatures.mockResolvedValue(false)
+
+    const settings = await resolveTenantSettingsByDomain(CUSTOM_DOMAIN)
+
+    expect(settings.name).toBe("ChatbotX")
+  })
+
+  test("uses PLATFORM_NAME as the default platform name when set", async () => {
+    mocks.env.PLATFORM_NAME = "Chatbot v.1"
+    mocks.hasEnterpriseFeatures.mockResolvedValue(false)
+
+    const settings = await resolveTenantSettingsByDomain(CUSTOM_DOMAIN)
+
+    expect(settings.name).toBe("Chatbot v.1")
   })
 })
 
