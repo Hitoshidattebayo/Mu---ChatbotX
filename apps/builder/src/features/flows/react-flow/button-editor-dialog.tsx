@@ -1,6 +1,5 @@
 "use client"
 
-import { channelTypes } from "@chatbotx.io/database/partials"
 import {
   type ButtonStepInput,
   type ButtonStepProps,
@@ -58,7 +57,10 @@ import RecursiveDropdownMenu from "./components/recursive-dropdown-menu"
 import { sendMessageEditorMenusWithButton } from "./nodes/send-message/menu"
 import type { MenuItem } from "./nodes/types"
 import { allSteps, DynamicStepEditor } from "./steps"
-import { allButtonsConfig } from "./steps/button-config"
+import {
+  allButtonsConfig,
+  canOfferCallPhoneNumberButton,
+} from "./steps/button-config"
 import { SpreadsheetDialogProvider } from "./steps/spreadsheet/components/spreadsheet-dialog-context"
 import { useStepStore } from "./stores/step-store-provider"
 
@@ -286,13 +288,13 @@ export function ButtonEditorDialog() {
     return isQuickReply ? limits.quickReplyLabel : limits.buttonLabel
   }, [activeNode, isQuickReply])
 
-  // Only Messenger has a native dial button, and never as a quick reply; on
-  // every other surface the option would silently degrade to a postback.
   const hiddenButtonTypes = useMemo(() => {
     const hidden = [...(buttonEditorConfig?.hiddenButtonTypes ?? [])]
     if (
-      isQuickReply ||
-      resolveNodeChannel(activeNode) !== channelTypes.enum.messenger
+      !canOfferCallPhoneNumberButton({
+        channel: resolveNodeChannel(activeNode),
+        isQuickReply: Boolean(isQuickReply),
+      })
     ) {
       hidden.push(buttonTypes.enum.callPhoneNumber)
     }
