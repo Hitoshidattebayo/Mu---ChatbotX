@@ -65,6 +65,9 @@ vi.mock("@/features/channel-connect/lib/resolve-connect-session", () => ({
 }))
 
 vi.mock("@/features/integration-webchat/lib", () => ({
+  initialBrandingMenus: <T>(entry: T) => [entry],
+  prepareBrandedMenus: <T>(menus: T[]) => menus,
+  isBrandingHidden: () => false,
   BRANDING_TITLE: "ChatbotX",
   getBrandingUrl: () => "https://app.test/branding",
 }))

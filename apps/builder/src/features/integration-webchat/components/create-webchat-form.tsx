@@ -36,7 +36,7 @@ import { useFlowSelectOptions } from "@/features/flows/provider/flow-hook"
 import { useInvalidateInboxes } from "@/features/inboxes/provider/inbox-hook"
 import { useTenantSettings } from "@/features/tenant"
 import { createWebchatAction } from "../actions/create-webchat.action"
-import { BRANDING_TITLE, getBrandingUrl } from "../lib"
+import { BRANDING_TITLE, getBrandingUrl, initialBrandingMenus } from "../lib"
 import { createWebchatRequest } from "../schema/mutation"
 import AuthorizedDomainField from "./authorized-domain-field"
 import PersistentMenuField from "./persistent-menu-field"
@@ -95,13 +95,11 @@ export function CreateWebchatForm({ workspaceId }: { workspaceId: string }) {
           welcomeFlowId: null,
           authorizedDomains: [],
           conversationStarters: [],
-          persistentMenus: [
-            {
-              label: BRANDING_TITLE,
-              type: "url" as const,
-              url: getBrandingUrl("webchat", appUrl),
-            },
-          ],
+          persistentMenus: initialBrandingMenus({
+            label: BRANDING_TITLE,
+            type: "url" as const,
+            url: getBrandingUrl("webchat", appUrl),
+          }),
           brandColor: "#007bff",
           hideHeader: false,
           showLogo: true,

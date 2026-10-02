@@ -14,6 +14,7 @@ import PersistentMenuField from "@/features/integration-webchat/components/persi
 import {
   BRANDING_TITLE,
   getBrandingUrl,
+  initialBrandingMenus,
 } from "@/features/integration-webchat/lib"
 import { useTenantSettings } from "@/features/tenant"
 import { createUserPersistentMenuAction } from "../actions/create-user-persistent-menu.action"
@@ -76,13 +77,13 @@ export function UserPersistentMenuForm({
         mode: "onChange",
         defaultValues: {
           name: menu?.name ?? "",
-          persistentMenus: menu?.menus ?? [
-            {
+          persistentMenus:
+            menu?.menus ??
+            initialBrandingMenus({
               label: BRANDING_TITLE,
               type: "url" as const,
               url: getBrandingUrl(channelTypes.enum.messenger, appUrl),
-            },
-          ],
+            }),
         },
       },
     },

@@ -7,18 +7,21 @@ const {
   mockFindFirst,
   mockGetDomainFromHeader,
   mockHeaders,
+  mockIsBrandingHidden,
   mockIsCommunity,
   mockWorkspaceFind,
 } = vi.hoisted(() => ({
   mockFindFirst: vi.fn(),
   mockGetDomainFromHeader: vi.fn(),
   mockHeaders: vi.fn(),
+  mockIsBrandingHidden: vi.fn(() => false),
   mockIsCommunity: vi.fn(() => false),
   mockWorkspaceFind: vi.fn(),
 }))
 
 vi.mock("@/env", () => ({
   isCommunity: mockIsCommunity,
+  isBrandingHidden: mockIsBrandingHidden,
 }))
 
 vi.mock("next/headers", () => ({
@@ -121,6 +124,7 @@ const setReferer = (referer: string | null) => {
 describe("WebchatPage", () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    mockIsBrandingHidden.mockReturnValue(false)
     mockIsCommunity.mockReturnValue(false)
     mockFindFirst.mockResolvedValue(targetWebchat)
     mockWorkspaceFind.mockResolvedValue({ scheduledDeletionAt: null })
@@ -264,6 +268,35 @@ describe("WebchatPage", () => {
     ).props.config
     expect(config.persistentMenus).toEqual([
       { label: "custom", type: "url", url: brandingUrl },
+    ])
+  })
+
+  test("hidden branding strips the branding entry even on community", async () => {
+    mockIsCommunity.mockReturnValue(true)
+    mockIsBrandingHidden.mockReturnValue(true)
+    const brandingUrl =
+      "https://app.chatbotx.io/?ref=selfhosted&channel=webchat"
+    mockFindFirst.mockResolvedValue({
+      ...targetWebchat,
+      authorizedDomains: [],
+      persistentMenus: [
+        { label: "Docs", type: "url", url: "https://docs.example" },
+        { label: "branding", type: "url", url: brandingUrl },
+      ],
+    })
+    setReferer(null)
+
+    const element = await WebchatPage({
+      searchParams: Promise.resolve(searchParams),
+    })
+
+    const config = (
+      element as {
+        props: { config: { persistentMenus: { url?: string }[] } }
+      }
+    ).props.config
+    expect(config.persistentMenus).toEqual([
+      { label: "Docs", type: "url", url: "https://docs.example" },
     ])
   })
 

@@ -5,7 +5,6 @@ import {
   inboxService,
   instagramIntegrationService,
 } from "@chatbotx.io/business"
-import { moveBrandingMenuLast } from "@chatbotx.io/business/branding"
 import { ChatbotXException } from "@chatbotx.io/business/errors"
 import { db, findOrFail } from "@chatbotx.io/database/client"
 import {
@@ -31,7 +30,10 @@ import {
   type WorkspaceIdAndIdRequestParams,
   workspaceIdAndIdRequestParams,
 } from "@/features/common/schema"
-import { getBrandingUrl } from "@/features/integration-webchat/lib"
+import {
+  getBrandingUrl,
+  prepareBrandedMenus,
+} from "@/features/integration-webchat/lib"
 import { logger } from "@/lib/log"
 import { workspaceActionClient } from "@/lib/safe-action"
 import { findIntegrationInstagram } from "../queries"
@@ -188,8 +190,10 @@ const buildPersistentMenuParams = async (
   persistentMenus: InstagramPersistentMenu[],
   appUrl: string,
 ): Promise<InstagramProfileRequest["persistent_menu"]> => {
-  const brandingUrl = getBrandingUrl("instagram", appUrl)
-  const menus = moveBrandingMenuLast(persistentMenus, brandingUrl)
+  const menus = prepareBrandedMenus(
+    persistentMenus,
+    getBrandingUrl("instagram", appUrl),
+  )
   const callToActions = await parseInstagramButtons(menus)
   return [
     {

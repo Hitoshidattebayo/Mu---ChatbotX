@@ -8,6 +8,7 @@ import {
 import { channelTypes } from "@chatbotx.io/database/partials"
 import type { MessengerAuthValue } from "@chatbotx.io/integration-messenger"
 import {
+  ensureMessengerWhitelistedDomain,
   getUserPages,
   integration as integrationMessenger,
   logMessengerWelcomeProfile,
@@ -25,7 +26,11 @@ import {
   unselectableCandidate,
 } from "@/features/channel-connect/lib/run-connect-sequence"
 import type { ConnectActionResultWire } from "@/features/channel-connect/schema"
-import { BRANDING_TITLE } from "@/features/integration-webchat/lib"
+import {
+  BRANDING_TITLE,
+  initialBrandingMenus,
+  isBrandingHidden,
+} from "@/features/integration-webchat/lib"
 import { updateWorkspaceLogo } from "@/features/workspaces/actions/upload-logo"
 import { FB_MESSENGER_PENDING_AUTH_COOKIE } from "@/lib/facebook-pending-auth"
 import { persistIntegrationUserInfo } from "@/lib/integration-user-info"
@@ -118,7 +123,7 @@ async function subscribeAndPersistPage({
       workspaceId: workspace.id,
       page: { pageId, pageName },
       auth,
-      persistentMenus: [brandingMenuEntry],
+      persistentMenus: initialBrandingMenus(brandingMenuEntry),
     })
 
   return {
@@ -130,11 +135,16 @@ async function subscribeAndPersistPage({
         integration: { ...integration, auth },
       })
 
-      await integrationMessenger.runChannelHandler("bot", "addBranding", {
-        ctx: brandingCtx,
-        title: BRANDING_TITLE,
-        url: brandingMenuEntry.url,
-      })
+      if (isBrandingHidden()) {
+        // addBranding also whitelists the app domain; keep that without the menu
+        await ensureMessengerWhitelistedDomain({ ctx: brandingCtx })
+      } else {
+        await integrationMessenger.runChannelHandler("bot", "addBranding", {
+          ctx: brandingCtx,
+          title: BRANDING_TITLE,
+          url: brandingMenuEntry.url,
+        })
+      }
 
       await logMessengerWelcomeProfile({
         ctx: brandingCtx,

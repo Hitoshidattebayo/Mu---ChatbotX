@@ -28,10 +28,10 @@ import { PlusIcon, TrashIcon } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { memo, useCallback, useEffect, useMemo, useRef } from "react"
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form"
-import { isCommunity } from "@/env"
+import { isBrandingHidden } from "@/env"
 import { useFlowSelectOptions } from "@/features/flows/provider/flow-hook"
 import { useTenantSettings } from "@/features/tenant"
-import { BRANDING_TITLE, getBrandingUrl } from "../lib"
+import { BRANDING_TITLE, getBrandingUrl, isBrandingEnforced } from "../lib"
 
 type PersistentMenuTypeOption = {
   value: WebchatPersistentMenuType
@@ -142,6 +142,14 @@ export default function PersistentMenuField({
   )
 
   useEffect(() => {
+    if (isBrandingHidden()) {
+      // Drop entries persisted before branding was hidden so the next save
+      // removes them from the stored menu as well.
+      if (brandingIndex !== -1) {
+        removePersistentMenus(brandingIndex)
+      }
+      return
+    }
     if (brandingIndex === -1 && !brandingRemovedByUser.current) {
       prependPersistentMenus({
         label: BRANDING_TITLE,
@@ -149,7 +157,12 @@ export default function PersistentMenuField({
         url: brandingURL,
       })
     }
-  }, [brandingIndex, prependPersistentMenus, brandingURL])
+  }, [
+    brandingIndex,
+    prependPersistentMenus,
+    removePersistentMenus,
+    brandingURL,
+  ])
 
   const handlePrepend = useCallback(() => {
     prependPersistentMenus({
@@ -226,7 +239,7 @@ export default function PersistentMenuField({
                   <AccordionTrigger>{BRANDING_TITLE}</AccordionTrigger>
                 </div>
 
-                {!isCommunity() && (
+                {!isBrandingEnforced() && (
                   <Button
                     className="mt-2 text-destructive"
                     onClick={handleRemoveBranding}

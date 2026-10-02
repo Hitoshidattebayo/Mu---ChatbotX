@@ -83,6 +83,9 @@ vi.mock("@chatbotx.io/integration-messenger", () => ({
 }))
 
 vi.mock("@/features/integration-webchat/lib", () => ({
+  initialBrandingMenus: <T>(entry: T) => [entry],
+  prepareBrandedMenus: <T>(menus: T[]) => menus,
+  isBrandingHidden: () => false,
   getBrandingUrl: vi.fn(() => "https://app.example.test/branding"),
 }))
 

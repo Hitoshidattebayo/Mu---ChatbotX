@@ -39,6 +39,8 @@ export const env = createEnv({
       .default("http://localhost:9000/chatbotx/"),
     NEXT_PUBLIC_STORAGE_URL: z.url().optional(),
     NEXT_PUBLIC_PANCAKE_CHAT_PAGE_ID: z.string().optional(),
+    // Drop the "Built with chatbotx.io" persistent-menu entry everywhere.
+    NEXT_PUBLIC_HIDE_BRANDING: z.stringbool().optional().default(false),
     NEXT_PUBLIC_ALLOWED_DEV_ORIGINS: z
       .string()
       .optional()
@@ -61,6 +63,7 @@ export const env = createEnv({
     NEXT_PUBLIC_PANCAKE_CHAT_PAGE_ID: clientEnv(
       "NEXT_PUBLIC_PANCAKE_CHAT_PAGE_ID",
     ),
+    NEXT_PUBLIC_HIDE_BRANDING: clientEnv("NEXT_PUBLIC_HIDE_BRANDING"),
     NEXT_PUBLIC_ALLOWED_DEV_ORIGINS: clientEnv(
       "NEXT_PUBLIC_ALLOWED_DEV_ORIGINS",
     ),
@@ -72,3 +75,4 @@ export const env = createEnv({
 export const isEnterprise = () => env.NEXT_PUBLIC_EDITION === "enterprise"
 export const isCloud = () => env.NEXT_PUBLIC_EDITION === "cloud"
 export const isCommunity = () => env.NEXT_PUBLIC_EDITION === "community"
+export const isBrandingHidden = () => env.NEXT_PUBLIC_HIDE_BRANDING

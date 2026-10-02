@@ -183,6 +183,9 @@ vi.mock("next/navigation", () => ({ redirect: vi.fn() }))
 
 vi.mock("@/env", () => ({ isCloud: () => true }))
 vi.mock("@/features/integration-webchat/lib", () => ({
+  initialBrandingMenus: <T>(entry: T) => [entry],
+  prepareBrandedMenus: <T>(menus: T[]) => menus,
+  isBrandingHidden: () => false,
   BRANDING_TITLE: "ChatbotX",
   getBrandingUrl: vi.fn(() => ""),
 }))
