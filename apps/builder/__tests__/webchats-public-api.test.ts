@@ -62,7 +62,10 @@ vi.mock("@chatbotx.io/business", () => ({
 }))
 
 const isCommunity = vi.fn(() => false)
-vi.mock("@/env", () => ({ isCommunity: () => isCommunity() }))
+vi.mock("@/env", () => ({
+  isCommunity: () => isCommunity(),
+  isBrandingHidden: () => false,
+}))
 
 vi.mock("@chatbotx.io/database/partials", async () => {
   const { z } = await import("zod")
