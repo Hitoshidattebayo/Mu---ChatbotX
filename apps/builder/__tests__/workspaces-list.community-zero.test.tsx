@@ -8,7 +8,8 @@ vi.mock("next-intl/server", () => ({
   getTranslations: async () => (key: string) => key,
 }))
 
-const { mockIsCommunity } = vi.hoisted(() => ({
+const { mockCommunityMaxWorkspaces, mockIsCommunity } = vi.hoisted(() => ({
+  mockCommunityMaxWorkspaces: vi.fn(() => 1),
   mockIsCommunity: vi.fn(() => true),
 }))
 
@@ -22,6 +23,7 @@ vi.mock("@/env", () => ({
 // WorkspaceStatusSwitch); the full package pulls in the database client,
 // which throws outside a real server runtime.
 vi.mock("@chatbotx.io/business", () => ({
+  communityMaxWorkspaces: mockCommunityMaxWorkspaces,
   isWorkspaceScheduledForDeletion: () => false,
 }))
 vi.mock("@chatbotx.io/business/workspace-lifecycle/predicates", () => ({
@@ -46,10 +48,12 @@ let root: Root | null = null
 
 async function renderWorkspacesList(
   workspaces: Parameters<typeof WorkspacesList>[0]["workspaces"],
+  ownerWorkspaceIds: string[] = [],
 ) {
   const ui = await WorkspacesList({
     user: { name: "Test User", email: "test@example.com", image: null },
     workspaces,
+    ownerWorkspaceIds,
   })
   container = document.createElement("div")
   document.body.appendChild(container)
@@ -70,6 +74,7 @@ afterEach(() => {
   container = null
   root = null
   mockIsCommunity.mockReturnValue(true)
+  mockCommunityMaxWorkspaces.mockReturnValue(1)
 })
 
 describe("WorkspacesList — community edition, zero workspaces", () => {
@@ -99,5 +104,30 @@ describe("WorkspacesList — community edition, zero workspaces", () => {
 
     const createLink = el.querySelector('a[href="/channels/create"]')
     expect(createLink).toBeNull()
+  })
+})
+
+const ownedWorkspace = {
+  id: "1",
+  name: "My workspace",
+  logo: null,
+  status: "active",
+  endTime: null,
+  scheduledDeletionAt: null,
+} as unknown as Parameters<typeof WorkspacesList>[0]["workspaces"][number]
+
+describe("WorkspacesList — community edition, COMMUNITY_MAX_WORKSPACES > 1", () => {
+  test("keeps the create card while the owner is below the limit", async () => {
+    mockCommunityMaxWorkspaces.mockReturnValue(3)
+    const el = await renderWorkspacesList([ownedWorkspace], ["1"])
+
+    expect(el.querySelector('a[href="/channels/create"]')).not.toBeNull()
+  })
+
+  test("hides the create card once the owner reaches the limit", async () => {
+    mockCommunityMaxWorkspaces.mockReturnValue(1)
+    const el = await renderWorkspacesList([ownedWorkspace], ["1"])
+
+    expect(el.querySelector('a[href="/channels/create"]')).toBeNull()
   })
 })
