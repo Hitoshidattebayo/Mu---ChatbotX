@@ -49,6 +49,21 @@ export function moveBrandingMenuLast<T extends BrandableMenuItem>(
   return result
 }
 
+/**
+ * Return a copy of `menus` without the branding entry (matched by
+ * `brandingUrl`). Used when a deployment hides branding
+ * (`NEXT_PUBLIC_HIDE_BRANDING`), so entries persisted before the flag was set
+ * never reach the channel.
+ */
+export function stripBrandingMenuEntry<T extends BrandableMenuItem>(
+  menus: readonly T[],
+  brandingUrl: string,
+): T[] {
+  return menus.filter(
+    (menu) => !(menu.type === "url" && menu.url === brandingUrl),
+  )
+}
+
 /** Shape of the url-type persistent-menu entry the branding link uses. */
 type BrandingMenuEntry = { label: string; type: "url"; url: string }
 

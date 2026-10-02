@@ -59,6 +59,9 @@ vi.mock("@/lib/workspace/authorize-workspace-access", () => ({
 }))
 
 vi.mock("@/features/integration-webchat/lib", () => ({
+  initialBrandingMenus: <T>(entry: T) => [entry],
+  prepareBrandedMenus: <T>(menus: T[]) => menus,
+  isBrandingHidden: () => false,
   BRANDING_TITLE: "ChatbotX",
   getBrandingUrl: (channel: string, appUrl: string) =>
     `${appUrl}/branding/${channel}`,

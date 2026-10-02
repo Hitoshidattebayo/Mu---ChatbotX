@@ -53,6 +53,9 @@ vi.mock("@chatbotx.io/integration-instagram-facebook", () => ({
 }))
 
 vi.mock("@/features/integration-webchat/lib", () => ({
+  initialBrandingMenus: <T>(entry: T) => [entry],
+  prepareBrandedMenus: <T>(menus: T[]) => menus,
+  isBrandingHidden: () => false,
   getBrandingUrl: vi.fn(),
 }))
 

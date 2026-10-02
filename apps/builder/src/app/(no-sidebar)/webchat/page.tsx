@@ -3,14 +3,17 @@ import {
   isWorkspaceScheduledForDeletion,
   workspaceService,
 } from "@chatbotx.io/business"
-import { ensureBrandingMenuEntry } from "@chatbotx.io/business/branding"
+import {
+  ensureBrandingMenuEntry,
+  stripBrandingMenuEntry,
+} from "@chatbotx.io/business/branding"
 import { zodBigintAsString } from "@chatbotx.io/utils"
 import type { SearchParams } from "next/dist/server/request/search-params"
 import { headers } from "next/headers"
 import { notFound } from "next/navigation"
 import { getTranslations } from "next-intl/server"
 import z from "zod"
-import { isCommunity } from "@/env"
+import { isBrandingHidden, isCommunity } from "@/env"
 import {
   BRANDING_TITLE,
   getBrandingUrl,
@@ -138,16 +141,27 @@ export default async function WebchatPage(props: WebchatPageProps) {
   // Community edition always shows the "Built with" branding link. Enforced
   // here on the read path so legacy rows (or rows edited via direct POSTs)
   // still render it.
+  // NEXT_PUBLIC_HIDE_BRANDING strips it instead, including from legacy rows.
   const clientConfig = toWebchatClientConfig(targetWebchat)
-  const config = isCommunity()
-    ? {
-        ...clientConfig,
-        persistentMenus: ensureBrandingMenuEntry(clientConfig.persistentMenus, {
-          label: BRANDING_TITLE,
-          url: getBrandingUrl("webchat", appUrl),
-        }),
-      }
-    : clientConfig
+  const brandingUrl = getBrandingUrl("webchat", appUrl)
+  let config = clientConfig
+  if (isBrandingHidden()) {
+    config = {
+      ...clientConfig,
+      persistentMenus: stripBrandingMenuEntry(
+        clientConfig.persistentMenus,
+        brandingUrl,
+      ),
+    }
+  } else if (isCommunity()) {
+    config = {
+      ...clientConfig,
+      persistentMenus: ensureBrandingMenuEntry(clientConfig.persistentMenus, {
+        label: BRANDING_TITLE,
+        url: brandingUrl,
+      }),
+    }
+  }
 
   return (
     <GuestSessionStoreProvider

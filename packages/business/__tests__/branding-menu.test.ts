@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest"
 import {
   ensureBrandingMenuEntry,
   moveBrandingMenuLast,
+  stripBrandingMenuEntry,
 } from "../src/platform/branding"
 
 const BRANDING_URL = "https://app.chatbotx.io/?ref=selfhosted&channel=webchat"
@@ -60,5 +61,35 @@ describe("ensureBrandingMenuEntry", () => {
 
     expect(result.at(-1)?.url).toBe(BRANDING_URL)
     expect(result).toHaveLength(2)
+  })
+})
+
+describe("stripBrandingMenuEntry", () => {
+  test("removes the branding entry and keeps the rest in order", () => {
+    const menus = [
+      { label: "Flow", type: "flow" },
+      { label: ENTRY.label, type: "url", url: BRANDING_URL },
+      { label: "Docs", type: "url", url: "https://docs.x" },
+    ]
+
+    expect(stripBrandingMenuEntry(menus, BRANDING_URL)).toEqual([
+      { label: "Flow", type: "flow" },
+      { label: "Docs", type: "url", url: "https://docs.x" },
+    ])
+  })
+
+  test("returns an empty list when only the branding entry exists", () => {
+    expect(
+      stripBrandingMenuEntry(
+        [{ label: ENTRY.label, type: "url", url: BRANDING_URL }],
+        BRANDING_URL,
+      ),
+    ).toEqual([])
+  })
+
+  test("leaves a non-url item that happens to share the url untouched", () => {
+    const menus = [{ label: "Flow", type: "flow", url: BRANDING_URL }]
+
+    expect(stripBrandingMenuEntry(menus, BRANDING_URL)).toEqual(menus)
   })
 })

@@ -2,6 +2,7 @@ import { contactInboxService } from "@chatbotx.io/business"
 import {
   buildBrandingUrl,
   moveBrandingMenuLast,
+  stripBrandingMenuEntry,
 } from "@chatbotx.io/business/branding"
 import type {
   MessengerPersistentMenu,
@@ -48,7 +49,17 @@ function buildWorkspaceCallToActions(
     "messenger",
     env.NEXT_PUBLIC_EDITION === "community",
   )
-  return messengerMenusToCallToActions(moveBrandingMenuLast(menus, brandingUrl))
+  return messengerMenusToCallToActions(prepareMenus(menus, brandingUrl))
+}
+
+/** Branding last when shown; removed when NEXT_PUBLIC_HIDE_BRANDING is set. */
+function prepareMenus(
+  menus: readonly MessengerPersistentMenu[],
+  brandingUrl: string,
+): MessengerPersistentMenu[] {
+  return env.NEXT_PUBLIC_HIDE_BRANDING
+    ? stripBrandingMenuEntry(menus, brandingUrl)
+    : moveBrandingMenuLast(menus, brandingUrl)
 }
 
 /**
@@ -163,10 +174,9 @@ export async function setMessengerUserPersistentMenu(
     "messenger",
     env.NEXT_PUBLIC_EDITION === "community",
   )
+  const prepared = prepareMenus(menus, brandingUrl)
   const callToActions =
-    menus.length === 0
-      ? []
-      : messengerMenusToCallToActions(moveBrandingMenuLast(menus, brandingUrl))
+    prepared.length === 0 ? [] : messengerMenusToCallToActions(prepared)
 
   await applyUserComposerAndMenu({ context, callToActions })
 }

@@ -8,6 +8,8 @@ const editionRule = z
 export const env = createEnv({
   server: {
     NEXT_PUBLIC_EDITION: editionRule,
+    // Drop the "Built with chatbotx.io" persistent-menu entry (matches builder).
+    NEXT_PUBLIC_HIDE_BRANDING: z.stringbool().optional().default(false),
     QUOTA_SYNC_INTERVAL_SECONDS: z.coerce.number().int().min(10).default(60),
     WEBHOOK_WORKER_CONCURRENCY: z.coerce
       .number()

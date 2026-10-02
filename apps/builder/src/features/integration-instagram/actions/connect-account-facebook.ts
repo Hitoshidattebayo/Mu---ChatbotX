@@ -19,7 +19,11 @@ import {
   unselectableCandidate,
 } from "@/features/channel-connect/lib/run-connect-sequence"
 import type { ConnectActionResultWire } from "@/features/channel-connect/schema"
-import { BRANDING_TITLE } from "@/features/integration-webchat/lib"
+import {
+  BRANDING_TITLE,
+  initialBrandingMenus,
+  isBrandingHidden,
+} from "@/features/integration-webchat/lib"
 import { updateWorkspaceLogo } from "@/features/workspaces/actions/upload-logo"
 import { FB_INSTAGRAM_FACEBOOK_PENDING_AUTH_COOKIE } from "@/lib/facebook-pending-auth"
 import { persistIntegrationUserInfo } from "@/lib/integration-user-info"
@@ -102,7 +106,7 @@ async function subscribeAndPersistAccount({
         pageId: account.pageId,
       },
       auth,
-      persistentMenus: [brandingMenuEntry],
+      persistentMenus: initialBrandingMenus(brandingMenuEntry),
     })
 
   return {
@@ -114,15 +118,17 @@ async function subscribeAndPersistAccount({
         integration: { ...integration, auth },
       })
 
-      await integrationInstagramFacebook.runChannelHandler(
-        "bot",
-        "addBranding",
-        {
-          ctx: brandingCtx,
-          title: BRANDING_TITLE,
-          url: brandingMenuEntry.url,
-        },
-      )
+      if (!isBrandingHidden()) {
+        await integrationInstagramFacebook.runChannelHandler(
+          "bot",
+          "addBranding",
+          {
+            ctx: brandingCtx,
+            title: BRANDING_TITLE,
+            url: brandingMenuEntry.url,
+          },
+        )
+      }
 
       await updateWorkspaceLogo({
         id: workspace.id,

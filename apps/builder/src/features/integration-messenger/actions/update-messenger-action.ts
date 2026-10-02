@@ -6,7 +6,6 @@ import {
   inboxService,
   messengerIntegrationService,
 } from "@chatbotx.io/business"
-import { moveBrandingMenuLast } from "@chatbotx.io/business/branding"
 import { ChatbotXException } from "@chatbotx.io/business/errors"
 import { db } from "@chatbotx.io/database/client"
 import type { MessengerPersona } from "@chatbotx.io/database/partials"
@@ -27,7 +26,10 @@ import type { MessengerAuthValue } from "@chatbotx.io/integration-messenger/sche
 import { distributedStore } from "@chatbotx.io/redis"
 import { createId, zodBigintAsString } from "@chatbotx.io/utils"
 import { normalizeError } from "universal-error-normalizer"
-import { getBrandingUrl } from "@/features/integration-webchat/lib"
+import {
+  getBrandingUrl,
+  prepareBrandedMenus,
+} from "@/features/integration-webchat/lib"
 import { logger } from "@/lib/log"
 import { workspaceActionClient } from "@/lib/safe-action"
 import { findIntegrationMessenger } from "../queries"
@@ -268,9 +270,11 @@ const getMessengerProfileParams = (
       : "GET_STARTED",
   }
 
-  if (model.persistentMenus.length) {
-    const brandingUrl = getBrandingUrl("messenger", appUrl)
-    const menus = moveBrandingMenuLast(model.persistentMenus, brandingUrl)
+  const menus = prepareBrandedMenus(
+    model.persistentMenus,
+    getBrandingUrl("messenger", appUrl),
+  )
+  if (menus.length) {
     const callToActions = messengerMenusToCallToActions(menus)
     params.persistent_menu = [
       {
