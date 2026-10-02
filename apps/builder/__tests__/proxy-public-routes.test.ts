@@ -21,6 +21,11 @@ describe("isPublicRoute", () => {
     expect(isPublicRoute("/goals")).toBe(false)
   })
 
+  test("/call is public so an Instagram contact can tap to dial", () => {
+    expect(isPublicRoute("/call")).toBe(true)
+    expect(isPublicRoute("/callbacks")).toBe(false)
+  })
+
   test("signed media proxy route families are public", () => {
     expect(isPublicRoute("/media/attachment/signed-token")).toBe(true)
     expect(isPublicRoute("/media/avatar/signed-token")).toBe(true)

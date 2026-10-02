@@ -1,3 +1,4 @@
+import { channelTypes } from "@chatbotx.io/database/partials"
 import { type ButtonType, buttonTypes } from "@chatbotx.io/flow-config"
 import {
   LinkIcon,
@@ -9,6 +10,26 @@ import {
   ZapIcon,
 } from "lucide-react"
 import type { TranslationFn } from "../nodes/types"
+
+/**
+ * Messenger dials natively and Instagram (no dial button) opens the `/call`
+ * page; neither allows it as a quick reply. Nodes default to `omnichannel`
+ * (they run on whatever channel the contact is on), so the option is offered
+ * there too; a node pinned to any other channel hides it, and a send on such a
+ * channel degrades the button to a postback.
+ */
+export const canOfferCallPhoneNumberButton = ({
+  channel,
+  isQuickReply,
+}: {
+  channel: string | undefined
+  isQuickReply: boolean
+}): boolean =>
+  !isQuickReply &&
+  (channel === undefined ||
+    channel === channelTypes.enum.omnichannel ||
+    channel === channelTypes.enum.messenger ||
+    channel === channelTypes.enum.instagram)
 
 type IButtonConfig = {
   icon: LucideIcon

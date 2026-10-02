@@ -846,6 +846,58 @@ describe("sendFlowStep", () => {
     expect(sentButtonUrl()).toContain(GO_PREFIX)
   })
 
+  const callStep = (phoneNumber: string) =>
+    ({
+      ...sendTextStep,
+      buttons: [
+        {
+          id: "button-1",
+          label: "Call Us",
+          buttonType: "callPhoneNumber",
+          beforeStep: {
+            id: "before-1",
+            stepType: "callPhoneNumber",
+            phoneNumber,
+          },
+          steps: [],
+        },
+      ],
+    }) as unknown as SendFlowStepData["step"]
+
+  test("sends a call button over Instagram as a link to the /call page", async () => {
+    mockFindContactInbox.mockResolvedValue({
+      ...fakeContactInbox,
+      channel: "instagram",
+    })
+
+    await sendFlowStep({
+      ...baseParams,
+      contactInboxId: "ci-1",
+      step: callStep("97672010111"),
+    })
+
+    const sent =
+      mockSendFlowStepToChannel.mock.calls.at(-1)?.[0]?.step?.buttons?.[0]
+    expect(sent?.buttonType).toBe("openWebsite")
+    expect(sentButtonUrl()).toBe(
+      "https://app.example.test/call?n=%2B97672010111",
+    )
+    expect(persistedButtonUrl()).toBe(sentButtonUrl())
+  })
+
+  test("keeps a call button native over Messenger", async () => {
+    await sendFlowStep({
+      ...baseParams,
+      contactInboxId: "ci-1",
+      step: callStep("+97672010111"),
+    })
+
+    const sent =
+      mockSendFlowStepToChannel.mock.calls.at(-1)?.[0]?.step?.buttons?.[0]
+    expect(sent?.buttonType).toBe("callPhoneNumber")
+    expect(persistedButtonUrl()).toBe("tel:+97672010111")
+  })
+
   test("leaves a Zalo link alone when the message goes out over Zalo", async () => {
     mockFindContactInbox.mockResolvedValue({
       ...fakeContactInbox,

@@ -13,7 +13,11 @@ import {
   resolveMediaUrl,
   resolveTenantSettings,
 } from "@chatbotx.io/business"
-import { wrapOpenLinkUrl } from "@chatbotx.io/business/open-link"
+import {
+  buildCallLinkUrl,
+  toDialablePhoneNumber,
+  wrapOpenLinkUrl,
+} from "@chatbotx.io/business/open-link"
 import { getPublicFileUrl } from "@chatbotx.io/business/utils"
 import {
   channelTypes,
@@ -246,7 +250,7 @@ export const convertButtonsToTemplate = (props: {
         id: button.id,
         label: button.label,
         buttonType: "url",
-        url: `tel:${phoneNumber.startsWith("+") ? phoneNumber : `+${phoneNumber}`}`,
+        url: `tel:${toDialablePhoneNumber(phoneNumber)}`,
         postback: buttonPayload,
       }
     }
@@ -404,6 +408,28 @@ const wrapOpenLinkButtonIfNeeded = (props: {
   button: ButtonStepProps
 }): ButtonStepProps => {
   const { button } = props
+  if (
+    button.buttonType === buttonTypes.enum.callPhoneNumber &&
+    props.channel === channelTypes.enum.instagram
+  ) {
+    // Instagram has no dial button (web_url/postback only), so the contact is
+    // sent to the `/call` page, which opens the dialer from a tap.
+    return {
+      id: button.id,
+      label: button.label,
+      buttonType: buttonTypes.enum.openWebsite,
+      beforeStep: {
+        id: button.beforeStep.id,
+        stepType: stepTypes.enum.openWebsite,
+        url: buildCallLinkUrl({
+          appUrl: props.appUrl,
+          phoneNumber: button.beforeStep.phoneNumber,
+        }),
+        browserSize: 100,
+      },
+      steps: button.steps,
+    }
+  }
   if (button.buttonType !== buttonTypes.enum.openWebsite) {
     return button
   }
