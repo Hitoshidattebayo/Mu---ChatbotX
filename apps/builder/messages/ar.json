@@ -2482,6 +2482,7 @@
       "sendGridAddContact": "إضافة جهة الاتصال إلى SendGrid",
       "messenger": "Messenger",
       "openWebsite": "فتح الموقع الإلكتروني",
+      "callPhoneNumber": "الاتصال برقم هاتف",
       "optInEmail": "تفعيل اشتراك البريد الإلكتروني",
       "optOutEmail": "إلغاء اشتراك البريد الإلكتروني",
       "performAction": "تنفيذ إجراء",

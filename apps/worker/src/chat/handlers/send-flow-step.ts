@@ -41,6 +41,7 @@ import {
   buttonTypes,
   encodeButtonPayload,
   extractMetadata,
+  getButtonPhoneNumber,
   isBulkOutboundMetadata,
   messageEventTypeSchema,
   type SendCardStepSchema,
@@ -234,6 +235,18 @@ export const convertButtonsToTemplate = (props: {
         label: button.label,
         buttonType: "url",
         url: appendCodeToMagicLink(button.beforeStep.url, buttonPayload),
+        postback: buttonPayload,
+      }
+    }
+
+    // Recorded as a `tel:` link so the inbox shows what the contact can dial.
+    const phoneNumber = getButtonPhoneNumber(button)
+    if (phoneNumber) {
+      return {
+        id: button.id,
+        label: button.label,
+        buttonType: "url",
+        url: `tel:${phoneNumber.startsWith("+") ? phoneNumber : `+${phoneNumber}`}`,
         postback: buttonPayload,
       }
     }

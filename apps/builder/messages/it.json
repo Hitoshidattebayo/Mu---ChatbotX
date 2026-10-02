@@ -2340,6 +2340,7 @@
       "sendGridAddContact": "Aggiungi contatto a SendGrid",
       "messenger": "Messenger",
       "openWebsite": "Apri sito web",
+      "callPhoneNumber": "Chiama numero di telefono",
       "optInEmail": "Acconsenti alle e-mail",
       "optOutEmail": "Revoca consenso alle e-mail",
       "performAction": "Esegui azione",

@@ -243,7 +243,9 @@ function SendMessengerTemplateMessageStepEditor(
               <ButtonStepEditor
                 editorConfig={{
                   lockLabel: true,
-                  hiddenButtonTypes: ["openWebsite"],
+                  // Template flow buttons are postbacks; a dial button lives in
+                  // the Meta template itself.
+                  hiddenButtonTypes: ["openWebsite", "callPhoneNumber"],
                   hideDelete: true,
                 }}
                 // biome-ignore lint/suspicious/noArrayIndexKey: stable seeded list

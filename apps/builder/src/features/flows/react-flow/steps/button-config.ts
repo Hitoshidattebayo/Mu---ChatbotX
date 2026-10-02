@@ -3,6 +3,7 @@ import {
   LinkIcon,
   type LucideIcon,
   MessageCircleIcon,
+  PhoneIcon,
   SkipForwardIcon,
   SquareArrowOutUpRightIcon,
   ZapIcon,
@@ -25,6 +26,11 @@ export const allButtonsConfig = (t: TranslationFn): IButtonConfig[] => [
     buttonType: buttonTypes.enum.openWebsite,
     icon: LinkIcon,
     label: t("flows.actions.openWebsite"),
+  },
+  {
+    buttonType: buttonTypes.enum.callPhoneNumber,
+    icon: PhoneIcon,
+    label: t("flows.actions.callPhoneNumber"),
   },
   {
     buttonType: buttonTypes.enum.performAction,

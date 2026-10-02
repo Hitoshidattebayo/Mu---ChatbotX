@@ -2340,6 +2340,7 @@
       "sendGridAddContact": "連絡先をSendGridに追加",
       "messenger": "Messenger",
       "openWebsite": "Webサイトを開く",
+      "callPhoneNumber": "電話をかける",
       "optInEmail": "メール配信に登録",
       "optOutEmail": "メール配信を解除",
       "performAction": "アクションを実行",

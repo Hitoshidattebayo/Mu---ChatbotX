@@ -2662,6 +2662,7 @@
       "sendGridAddContact": "將聯絡人新增到 SendGrid",
       "messenger": "Messenger",
       "openWebsite": "打開網站",
+      "callPhoneNumber": "撥打電話號碼",
       "optInEmail": "選擇接收電子郵件",
       "optOutEmail": "選擇退出電子郵件",
       "performAction": "執行操作",

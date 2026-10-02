@@ -2340,6 +2340,7 @@
       "sendGridAddContact": "Kontakt zu SendGrid hinzufügen",
       "messenger": "Messenger",
       "openWebsite": "Website öffnen",
+      "callPhoneNumber": "Telefonnummer anrufen",
       "optInEmail": "E-Mail-Einwilligung erteilen",
       "optOutEmail": "E-Mail-Einwilligung widerrufen",
       "performAction": "Aktion ausführen",

@@ -2340,6 +2340,7 @@
       "sendGridAddContact": "Lisää yhteystieto SendGridiin",
       "messenger": "Messenger",
       "openWebsite": "Avaa verkkosivusto",
+      "callPhoneNumber": "Soita puhelinnumeroon",
       "optInEmail": "Tilaa sähköpostit",
       "optOutEmail": "Peru sähköpostit",
       "performAction": "Suorita toiminto",
