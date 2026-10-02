@@ -1,6 +1,7 @@
 import { createId, zodBigintAsString } from "@chatbotx.io/utils"
 import { z } from "zod"
 import { actionSteps } from "../shared"
+import { callPhoneNumberStepSchema } from "./call-phone-number"
 import { openWebsiteStepSchema } from "./open-website"
 import { startAnotherNodeStepSchema } from "./start-another-node"
 import { startExternalFlowStepSchema } from "./start-external-flow"
@@ -14,6 +15,9 @@ export const buttonTypes = z.enum([
   "startExternalNode",
   "startAnotherNode",
   "whatsappOptionList",
+  // Dials a number. Only Messenger has a native button for it, so the builder
+  // offers it on Messenger nodes only; other channels fall back to a postback.
+  "callPhoneNumber",
 ])
 export type ButtonType = z.infer<typeof buttonTypes>
 
@@ -57,6 +61,11 @@ export const buttonStepSchema = z
         steps: z.array(z.union(actionSteps)),
       }),
       z.object({
+        buttonType: z.literal(buttonTypes.enum.callPhoneNumber),
+        beforeStep: callPhoneNumberStepSchema,
+        steps: z.array(z.union(actionSteps)),
+      }),
+      z.object({
         buttonType: z.literal(buttonTypes.enum.startAnotherNode),
         beforeStep: startAnotherNodeStepSchema,
         steps: z.array(z.union(actionSteps)),
@@ -82,6 +91,14 @@ export const getButtonLinkUrl = (
 ): string | undefined =>
   button.buttonType === buttonTypes.enum.openWebsite
     ? button.beforeStep.url
+    : undefined
+
+/** The number a `callPhoneNumber` button dials, or `undefined` otherwise. */
+export const getButtonPhoneNumber = (
+  button: ButtonStepProps,
+): string | undefined =>
+  button.buttonType === buttonTypes.enum.callPhoneNumber
+    ? button.beforeStep.phoneNumber
     : undefined
 
 export const buttonStepDefaultFn = (

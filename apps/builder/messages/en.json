@@ -2727,6 +2727,7 @@
       "sendGridAddContact": "Add Contact to SendGrid",
       "messenger": "Messenger",
       "openWebsite": "Open Website",
+      "callPhoneNumber": "Call Phone Number",
       "optInEmail": "Opt In Email",
       "optOutEmail": "Opt Out Email",
       "performAction": "Perform Action",

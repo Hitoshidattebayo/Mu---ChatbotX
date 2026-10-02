@@ -454,6 +454,8 @@ export const flowStepHandlers: Record<
   [stepTypes.enum.sendGridAddContact]: addSendGridContact,
   [stepTypes.enum.notifyAgent]: undefined,
   [stepTypes.enum.openWebsite]: undefined,
+  // Button-only beforeStep: Messenger dials it client-side, nothing to execute.
+  [stepTypes.enum.callPhoneNumber]: undefined,
   [stepTypes.enum.aiAnalyzeImage]: handleAIAnalyzeImage,
   [stepTypes.enum.aiDeleteMessageHistory]: handleAIDeleteMessageHistory,
   [stepTypes.enum.aiEditImage]: (props) =>

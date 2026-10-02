@@ -77,6 +77,7 @@
       "sendGridAddContact": "Adaugă contactul în SendGrid",
       "messenger": "Messenger",
       "openWebsite": "Deschide site-ul web",
+      "callPhoneNumber": "Apelează numărul de telefon",
       "optInEmail": "Abonează la e-mail",
       "optOutEmail": "Dezabonează de la e-mail",
       "performAction": "Execută acțiunea",

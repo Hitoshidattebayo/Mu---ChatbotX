@@ -369,6 +369,7 @@
       "sendGridAddContact": "הוספת איש קשר ל-SendGrid",
       "messenger": "Messenger",
       "openWebsite": "פתיחת אתר",
+      "callPhoneNumber": "חיוג למספר טלפון",
       "optInEmail": "הסכמה לקבלת דוא\"ל",
       "optOutEmail": "ביטול הסכמה לקבלת דוא\"ל",
       "performAction": "ביצוע פעולה",

@@ -2340,6 +2340,7 @@
       "sendGridAddContact": "Tilføj Kontakt til SendGrid",
       "messenger": "Messenger",
       "openWebsite": "Åbn Websted",
+      "callPhoneNumber": "Call Telefon Nummer",
       "optInEmail": "Opt I E-mail",
       "optOutEmail": "Opt Out E-mail",
       "performAction": "Perform Handling",

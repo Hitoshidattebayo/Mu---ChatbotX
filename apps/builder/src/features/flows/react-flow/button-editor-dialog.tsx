@@ -1,11 +1,14 @@
 "use client"
 
+import { channelTypes } from "@chatbotx.io/database/partials"
 import {
   type ButtonStepInput,
   type ButtonStepProps,
   type ButtonType,
   buttonStepSchema,
   buttonTypes,
+  type CallPhoneNumberStepSchema,
+  callPhoneNumberStepDefaultFn,
   type FlowNode,
   nodeTypeSchema,
   type OpenWebsiteStepSchema,
@@ -283,6 +286,19 @@ export function ButtonEditorDialog() {
     return isQuickReply ? limits.quickReplyLabel : limits.buttonLabel
   }, [activeNode, isQuickReply])
 
+  // Only Messenger has a native dial button, and never as a quick reply; on
+  // every other surface the option would silently degrade to a postback.
+  const hiddenButtonTypes = useMemo(() => {
+    const hidden = [...(buttonEditorConfig?.hiddenButtonTypes ?? [])]
+    if (
+      isQuickReply ||
+      resolveNodeChannel(activeNode) !== channelTypes.enum.messenger
+    ) {
+      hidden.push(buttonTypes.enum.callPhoneNumber)
+    }
+    return hidden
+  }, [activeNode, isQuickReply, buttonEditorConfig?.hiddenButtonTypes])
+
   // biome-ignore lint/correctness/useExhaustiveDependencies: wip
   useEffect(() => {
     if (buttonPath && openButtonEditorDialog && buttonInitialData) {
@@ -393,6 +409,7 @@ export function ButtonEditorDialog() {
       let beforeStep:
         | StartAnotherNodeStepSchema
         | OpenWebsiteStepSchema
+        | CallPhoneNumberStepSchema
         | StartExternalFlowStepSchema
         | StartExternalNodeStepSchema
         | null = null
@@ -440,6 +457,10 @@ export function ButtonEditorDialog() {
         }
         case buttonTypes.enum.openWebsite: {
           beforeStep = openWebsiteStepDefaultFn()
+          break
+        }
+        case buttonTypes.enum.callPhoneNumber: {
+          beforeStep = callPhoneNumberStepDefaultFn()
           break
         }
         case buttonTypes.enum.startExternalNode: {
@@ -527,9 +548,7 @@ export function ButtonEditorDialog() {
                 </div>
               ) : (
                 <AllButtonOptions
-                  hiddenButtonTypes={
-                    buttonEditorConfig?.hiddenButtonTypes ?? undefined
-                  }
+                  hiddenButtonTypes={hiddenButtonTypes}
                   onChooseButton={onChooseButton}
                 />
               )}
