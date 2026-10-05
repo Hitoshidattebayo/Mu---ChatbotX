@@ -19,23 +19,24 @@ import { useRouter } from "next/navigation"
 import { useLocale, useTranslations } from "next-intl"
 import type React from "react"
 import { useState, useTransition } from "react"
-import { isLocale, localeMeta, locales, resolveLocale } from "@/i18n/config"
+import { isLocale, localeMeta, resolveLocale } from "@/i18n/config"
+import { enabledUiLocales, toEnabledUiLocale } from "@/i18n/enabled-locales"
 import { setUserLocale } from "@/lib/locale"
 
-const items = locales.map((value) => ({
-  value,
-  label: localeMeta[value].nativeLabel,
-}))
-
 export const LangSelector: React.FC = () => {
-  const locale = resolveLocale(useLocale())
+  const enabledLocales = enabledUiLocales()
+  const locale = toEnabledUiLocale(resolveLocale(useLocale()), enabledLocales)
+  const items = enabledLocales.map((value) => ({
+    value,
+    label: localeMeta[value].nativeLabel,
+  }))
   const [open, setOpen] = useState(false)
   const [isPending, startTransition] = useTransition()
   const router = useRouter()
   const t = useTranslations()
 
   function onChangeLocale(value: string) {
-    if (!isLocale(value)) {
+    if (!(isLocale(value) && enabledLocales.includes(value))) {
       return
     }
     startTransition(async () => {

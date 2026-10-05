@@ -1,5 +1,6 @@
 import { getRequestConfig } from "next-intl/server"
 import { resolveLocale } from "@/i18n/config"
+import { toEnabledUiLocale } from "@/i18n/enabled-locales"
 import { messagesByLocale } from "@/i18n/messages"
 import { getUserLocale } from "@/lib/locale"
 import { getUserTimezone } from "@/lib/timezone"
@@ -18,7 +19,7 @@ function resolveEnglishFallback(key: string, namespace?: string) {
 }
 
 export default getRequestConfig(async () => {
-  const locale = resolveLocale(await getUserLocale())
+  const locale = toEnabledUiLocale(resolveLocale(await getUserLocale()))
   // Without an explicit zone next-intl inherits the server process zone and
   // hands it to the client, so a UTC server formats every date in UTC.
   const timeZone = await getUserTimezone()
