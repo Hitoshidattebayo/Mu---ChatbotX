@@ -6,6 +6,7 @@ const PUBLIC_ENV_KEYS = [
   "NEXT_PUBLIC_STORAGE_URL",
   "NEXT_PUBLIC_PANCAKE_CHAT_PAGE_ID",
   "NEXT_PUBLIC_HIDE_BRANDING",
+  "NEXT_PUBLIC_UI_LOCALES",
 ] as const
 
 export function PublicEnvScript() {
