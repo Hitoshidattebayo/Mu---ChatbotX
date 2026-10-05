@@ -728,7 +728,13 @@ export function createAuth(config: AuthConfig) {
     },
     advanced: {
       database: {
-        generateId: "serial",
+        // Snowflake ids exceed Number.MAX_SAFE_INTEGER. "serial" makes
+        // better-auth coerce every id and `*.id` reference to a JS number, which
+        // rounds odd ids to their even neighbour — an Account/Session then
+        // points at a userId that does not exist (FK violation on sign-up for
+        // roughly half of all new users). Generating the same snowflake here
+        // keeps ids as strings end to end.
+        generateId: () => createId(),
       },
     },
     trustedOrigins: async () => {
