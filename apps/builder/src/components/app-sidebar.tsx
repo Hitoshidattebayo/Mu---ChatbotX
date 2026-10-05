@@ -196,7 +196,7 @@ export function AppSidebar({
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader className="gap-0 px-0 py-0">
         <Link
-          className="flex h-12 items-center justify-center border-b"
+          className="flex items-center justify-center border-b py-[30px] group-data-[collapsible=icon]:h-12 group-data-[collapsible=icon]:py-0"
           href="/"
         >
           <BrandIcon alt="Brand" />
