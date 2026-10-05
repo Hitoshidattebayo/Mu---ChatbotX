@@ -10,6 +10,7 @@ import he from "../../messages/he.json"
 import id from "../../messages/id.json"
 import it from "../../messages/it.json"
 import ja from "../../messages/ja.json"
+import mn from "../../messages/mn.json"
 import nl from "../../messages/nl.json"
 import ptBR from "../../messages/pt-BR.json"
 import ptPT from "../../messages/pt-PT.json"
@@ -34,6 +35,7 @@ export const messagesByLocale: Record<Locale, Record<string, unknown>> = {
   id,
   it,
   ja,
+  mn,
   nl,
   "pt-BR": ptBR,
   "pt-PT": ptPT,

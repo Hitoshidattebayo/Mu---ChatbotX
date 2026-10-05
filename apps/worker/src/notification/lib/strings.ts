@@ -96,6 +96,14 @@ const strings = {
       `${count}件の添付ファイルを送信しました`,
     assignedConversation: "会話が割り当てられました",
   },
+  mn: {
+    newMessage: "Шинэ зурвас",
+    sharedLocation: "Байршил хуваалцсан",
+    sentLink: "Холбоос илгээсэн",
+    sentAttachment: "Хавсралт илгээсэн",
+    sentAttachments: (count: number) => `${count} хавсралт илгээсэн`,
+    assignedConversation: "Танд харилцан яриа хуваарилагдлаа",
+  },
   nl: {
     newMessage: "Nieuw bericht",
     sharedLocation: "Heeft een locatie gedeeld",
